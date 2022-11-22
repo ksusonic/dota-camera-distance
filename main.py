@@ -72,9 +72,8 @@ def get_steam_path():
 def get_steam_library_path(steam_path):
     # Getting steam library path,
     # as Dota 2 can be installed on different drive
-    library_folders = vdf.load(open(steam_path + LIBRARY_FOLDERS_PATH))[
-        "libraryfolders"
-    ]
+    library_folders_path = os.path.join(steam_path, LIBRARY_FOLDERS_PATH)
+    library_folders = vdf.load(open(library_folders_path))["libraryfolders"]
     for key in library_folders:
         if str(DOTA_APP_ID) in library_folders[key]["apps"]:
             return library_folders[key]["path"]
@@ -84,13 +83,14 @@ def dota_was_updating(steam_library_path):
     # Dota 2 update status are stored in app_manifest file
     # If status is '4' that means that Dota is updated and ready to launch
     # Otherwise, it is needed to wait for it to end its updates
-    app_manifest = vdf.load(open(steam_library_path + APP_MANIFEST_PATH))
+    app_manifest_path = os.path.join(steam_library_path, APP_MANIFEST_PATH)
+    app_manifest = vdf.load(open(app_manifest_path))
     app_status = app_manifest["AppState"]["StateFlags"]
     if app_status != "4":
         while app_status != "4":
             print(f"Waiting for Dota 2 to get updates, status: {app_status}", end="\r")
             time.sleep(1)
-            app_manifest = vdf.load(open(steam_library_path + APP_MANIFEST_PATH))
+            app_manifest = vdf.load(open(app_manifest_path))
             app_status = app_manifest["AppState"]["StateFlags"]
         print()
         return True
@@ -132,7 +132,7 @@ def set_config():
     # set this config variable to "manual", set your manual string, and the program won't update it
     # automatically every time you launch it.
     if (
-        (config["receive_type"].lower() == "auto")
+        config["receive_type"].lower() == "auto"
         or "search_hex_string" not in config
         or not config["search_hex_string"]
     ):
@@ -155,7 +155,9 @@ def set_config():
     print(f"Steam library path: {config['steam_library_path']}")
 
     if "client_dll_path" not in config or not config["client_dll_path"]:
-        config["client_dll_path"] = config["steam_library_path"] + CLIENT_DLL_PATH
+        config["client_dll_path"] = os.path.join(
+            config["steam_library_path"], CLIENT_DLL_PATH
+        )
     print(f"Client.dll path: {config['client_dll_path']}")
 
     with open(config_path, "w") as configfile:
