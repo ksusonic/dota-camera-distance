@@ -12,10 +12,12 @@ DOTA_APP_ID = "570"
 DEFAULT_SEARCH_HEX_STRING = "00 00 00 00 00 00 2E 40 00 00 96 44 00 00 E1 44"
 SERVER_SEARCH_HEX_STRING_LINK = "https://raw.githubusercontent.com/searayeah/dota-camera-distance/main/current_hex_string"
 DEFAULT_DISTANCE = "1200"
-STEAM_REGISTRY_KEY = "SOFTWARE\\WOW6432Node\\Valve\\Steam"
-CLIENT_DLL_PATH = "\\steamapps\\common\\dota 2 beta\\game\\dota\\bin\\win64\\client.dll"
-LIBRARY_FOLDERS_PATH = "\\steamapps\\libraryfolders.vdf"
-APP_MANIFEST_PATH = f"\\steamapps\\appmanifest_{DOTA_APP_ID}.acf"
+STEAM_REGISTRY_KEY = os.path.join("SOFTWARE", "WOW6432Node", "Valve", "Steam")
+CLIENT_DLL_PATH = os.path.join(
+    "steamapps", "common", "dota 2 beta", "game", "dota", "bin", "win64", "client.dll"
+)
+LIBRARY_FOLDERS_PATH = os.path.join("steamapps", "libraryfolders.vdf")
+APP_MANIFEST_PATH = os.path.join("steamapps", f"appmanifest_{DOTA_APP_ID}.acf")
 
 
 def set_distance(search_hex_string, distance, client_dll_path):
