@@ -50,7 +50,6 @@ def set_distance(search_hex_string, distance, client_dll_path):
     client_dll_hex_new, changes_count = re.subn(
         search_hex_string_regex, distance_hex_string, client_dll_hex, 1
     )
-
     if changes_count == 0:
         raise Exception(
             "Couldn't find the hex value in client.dll file. Valve might have changed it."
@@ -61,7 +60,6 @@ def set_distance(search_hex_string, distance, client_dll_path):
 
     with open(client_dll_path, "wb") as f:
         f.write(bytes.fromhex(client_dll_hex_new))
-
 
 def get_steam_path():
     # Getting steam path from Windows Registry
