@@ -160,7 +160,7 @@ def set_config():
         or not config["hex_string"]
     ):
         config["hex_string"] = get_current_hex_string()
-    print(f"Search hex string: {config['hex_string']}")
+    print(f"Hex string: {config['hex_string']}")
 
     if "distance" not in config or not config["distance"]:
         config["distance"] = (
@@ -208,11 +208,11 @@ def main():
     ) = set_config()
 
     set_distance(hex_string, distance, client_dll_path)
-    os.startfile(f"steam://rungameid/{DOTA_APP_ID}")  # windows only
+    os.startfile(f"steam://rungameid/{DOTA_APP_ID}")  # Windows only
     print("Launching Dota 2 ...")
 
     # When launching Dota for the first time it might get updates,
-    # so client.dll needs to be rewritten again
+    # so client.dll needs to be rewritten again.
     if dota_was_updating(steam_library_path):
         set_distance(hex_string, distance, client_dll_path)
         print('Press "Play game"')

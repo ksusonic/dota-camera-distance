@@ -20,4 +20,3 @@ This application:
 1. Run ```python main.py```, if you have [Python](https://www.python.org/) installed on your system.
 2. Install [Python](https://www.python.org/downloads/) and [requirements.txt](https://stackoverflow.com/a/15593865) to build your own ```.exe``` file using ```pyinstaller --noconfirm --onefile --console --clean --icon game-icon.ico --name dota-camera-distance main.py```. This ```.exe``` file will be usable on systems without Python installed.
 3. [Download](https://github.com/searayeah/dota-camera-distance/releases/download/4.0/dota-camera-distance.exe) pre-built ```.exe```.
-
