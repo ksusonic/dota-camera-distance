@@ -2,7 +2,7 @@
 
 *Replace your Dota 2 icon by this app to completely forget about manually changing camera distance.*
 
-[Download latest version](https://github.com/searayeah/dota-camera-distance/releases/download/4.0/dota-camera-distance.exe)
+[Download latest version](https://github.com/searayeah/dota-camera-distance/releases/latest/download/dota-camera-distance.exe)
 
 ## Abstract
 These days people use hex-editors (such as [HxD](https://mh-nexus.de/en/hxd/)) to increase camera distance by editing some hex-string in ```client.dll``` file inside Dota 2 folder. However, camera distance gets reset every time the game gets an update, even a small one. This app provides a solution for this annoying problem.
