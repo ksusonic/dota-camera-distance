@@ -1,4 +1,4 @@
-# [7.32c]dota-camera-distance
+# [7.32d]dota-camera-distance
 
 *Replace your Dota 2 icon by this app to completely forget about manually changing camera distance.*
 
