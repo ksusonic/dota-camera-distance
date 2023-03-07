@@ -9,7 +9,7 @@ import vdf
 import requests
 
 DOTA_APP_ID = "570"
-DEFAULT_HEX_STRING = "00 00 00 00 00 00 2E 40 00 00 96 44 00 00 E1 44"
+DEFAULT_HEX_STRING = "00 00 00 00 00 00 2E 40 00 00 96 44 00 00 61 45"
 SERVER_HEX_STRING_LINK = "https://raw.githubusercontent.com/searayeah/dota-camera-distance/main/current_hex_string"
 DEFAULT_DISTANCE = "1200"
 STEAM_REGISTRY_KEY = os.path.join("SOFTWARE", "WOW6432Node", "Valve", "Steam")
@@ -138,46 +138,39 @@ def set_config():
     config_file = configparser.ConfigParser()
     config_file.read(config_path)
 
-    if "DOTA-CAMERA-DISTANCE" not in config_file:
+    if not config_file.get("DOTA-CAMERA-DISTANCE"):
         config_file["DOTA-CAMERA-DISTANCE"] = {}
 
     config = config_file["DOTA-CAMERA-DISTANCE"]
 
-    if "receive_type" not in config or not config["receive_type"]:
-        config[
-            '# "auto"'
-        ] = 'automatically get string, "manual" = set the string manually'
-        config["receive_type"] = "auto"
+    if not config.get("receive_type"):
+        config["receive_type"] = "auto" # or "manual"
     print(f"Receive type: {config['receive_type']}")
 
     # I will update the string through github current_hex_string file
     # but if you obtained the new string faster than me, you can
     # set this config variable to "manual", set your manual string, and the program won't update it
     # automatically every time you launch it.
-    if (
-        config["receive_type"].lower() == "auto"
-        or "hex_string" not in config
-        or not config["hex_string"]
-    ):
+    if config["receive_type"].lower() == "auto" or not config.get("hex_string"):
         config["hex_string"] = get_current_hex_string()
     print(f"Hex string: {config['hex_string']}")
 
-    if "distance" not in config or not config["distance"]:
+    if not config.get("distance"):
         config["distance"] = (
             input("Enter distance[default 1200, recommended 1400]: ")
             or DEFAULT_DISTANCE
         )
     print(f"Distance: {config['distance']}")
 
-    if "steam_path" not in config or not config["steam_path"]:
+    if not config.get("steam_path"):
         config["steam_path"] = get_steam_path()
     print(f"Steam path: {config['steam_path']}")
 
-    if "steam_library_path" not in config or not config["steam_library_path"]:
+    if not config.get("steam_library_path"):
         config["steam_library_path"] = get_steam_library_path(config["steam_path"])
     print(f"Steam library path: {config['steam_library_path']}")
 
-    if "client_dll_path" not in config or not config["client_dll_path"]:
+    if not config.get("client_dll_path"):
         config["client_dll_path"] = os.path.join(
             config["steam_library_path"], CLIENT_DLL_PATH
         )
