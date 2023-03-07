@@ -1,4 +1,6 @@
-# [7.32d]dota-camera-distance
+# [7.32e]dota-camera-distance
+
+## Current string: ```00 00 96 44 00 00 61 45```
 
 *Replace your Dota 2 icon by this app to completely forget about manually changing camera distance.*
 
@@ -6,20 +8,26 @@
 
 ## Abstract
 
-These days people use hex-editors (such as [HxD](https://mh-nexus.de/en/hxd/)) to increase camera distance by editing some hex-string in ```client.dll``` file inside Dota 2 folder. However, camera distance gets reset every time the game gets an update, even a small one. This app provides a solution for this annoying problem.
+Using hex-editors (like [HxD](https://mh-nexus.de/en/hxd/)) to increase camera distance might be frustrating as camera distance gets reset every time the game gets an update. This app provides an automatic solution.
 
 ## App Description
 
 This application:
 
-1. Automatically locates your Dota 2 folder and finds ```client.dll``` file
-2. Changes camera distance.
-3. Launches Dota 2.
+1. Locates your Dota 2 folder and ```client.dll``` file
+2. Changes camera distance to desired value
+3. Launches Dota 2
 
-> At first launch you will be prompted to enter the required camera distance. With further launches this app will run Dota with distance you have set initially. You can always change your mind by deleting or editing config.ini generated at the location of the script.
+> At first launch you will be prompted to enter the required camera distance. With further launches this app will run Dota with this initial value. You can always change it by deleting or editing config.ini generated at the location of the script.
 
 ## Executing
 
-1. Run ```python main.py```, if you have [Python](https://www.python.org/) installed on your system.
-2. Install [Python](https://www.python.org/downloads/) and [requirements.txt](https://stackoverflow.com/a/15593865) to build your own ```.exe``` file using ```pyinstaller --noconfirm --onefile --console --clean --icon game-icon.ico --name dota-camera-distance main.py```. This ```.exe``` file will be usable on systems without Python installed.
-3. [Download](https://github.com/searayeah/dota-camera-distance/releases/latest/download/dota-camera-distance.exe) pre-built ```.exe```.
+1. [Download exe](https://github.com/searayeah/dota-camera-distance/releases/latest/download/dota-camera-distance.exe) and run  ```dota-camera-distance.exe```
+2. [Python](https://www.python.org/): ```python main.py```
+
+## Building
+
+1. Install [Python](https://www.python.org/downloads/) and [requirements.txt](https://stackoverflow.com/a/15593865)
+2. Build ```.exe``` file using command ```pyinstaller --noconfirm --onefile --console --clean --icon game-icon.ico --name dota-camera-distance main.py```
+
+> The ```.exe``` file will be usable on systems without Python installed.

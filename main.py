@@ -9,7 +9,7 @@ import vdf
 import requests
 
 DOTA_APP_ID = "570"
-DEFAULT_HEX_STRING = "00 00 00 00 00 00 2E 40 00 00 96 44 00 00 61 45"
+DEFAULT_HEX_STRING = "00 00 00 00 00 00 2E 40 00 00 96 44 00 00 61 45"  # 7.32e
 SERVER_HEX_STRING_LINK = "https://raw.githubusercontent.com/searayeah/dota-camera-distance/main/current_hex_string"
 DEFAULT_DISTANCE = "1200"
 STEAM_REGISTRY_KEY = os.path.join("SOFTWARE", "WOW6432Node", "Valve", "Steam")
@@ -19,11 +19,15 @@ CLIENT_DLL_PATH = os.path.join(
 LIBRARY_FOLDERS_PATH = os.path.join("steamapps", "libraryfolders.vdf")
 APP_MANIFEST_PATH = os.path.join("steamapps", f"appmanifest_{DOTA_APP_ID}.acf")
 
+DISTANCE_MESSAGE = "Enter distance[default 1200, recommended 1400]: "
+OLD_CONFIG_MESSAGE = "Detected old config style, rewriting..."
+CONFIG_ERROR_MESSAGE = "Something wrong with the config, creating new one"
+
 
 def set_distance(hex_string, distance, client_dll_path):
     # First of all, it is important to notice that distance value is only
     # 8 numbers long, but 8 numbers is not enough to determine its exact location,
-    # as there can be more than one occurence of its sequence.
+    # as there can be more than one occurence of the sequence.
     # Therefore, we use big strings e.g 00 00 00 00 00 00 2E 40 00 00 96 44 00 00 E1 44.
 
     hex_string = hex_string.lower().replace(" ", "")
@@ -33,10 +37,13 @@ def set_distance(hex_string, distance, client_dll_path):
 
     # Converting desired distance to hex format.
     distance_hex = struct.pack("f", float(distance)).hex()
-    distance_hex_length = len(distance_hex)  # this might be unnecessary, always 8
+
+    # This might be unnecessary, always 8 chars long
+    distance_hex_length = len(distance_hex)
 
     # Find the location of default distance (00 00 96 44 = 1200)
     # in hex_string (e.g 0000000000002E40 00 00 96 44 0000E144).
+
     # hex_string is not hardcoded as it is changed from patch to patch.
     # This 8 numbers can be at various positions (start, middle, end, etc.).
     # By doing this, the position of this 8 numbers is remembered by index
@@ -136,65 +143,78 @@ def get_current_hex_string():
 def set_config():
     config_path = os.path.join(os.getcwd(), "config.ini")
     config_file = configparser.ConfigParser()
-    config_file.read(config_path)
 
-    if not config_file.get("DOTA-CAMERA-DISTANCE"):
-        config_file["DOTA-CAMERA-DISTANCE"] = {}
+    try:
+        config_file.read(config_path)
+    except Exception as e:
+        print(e)
+        print(CONFIG_ERROR_MESSAGE)
 
-    config = config_file["DOTA-CAMERA-DISTANCE"]
+    if config_file.has_section("DOTA-CAMERA-DISTANCE"):
+        config_file.clear()
+        print(OLD_CONFIG_MESSAGE)
 
-    if not config.get("receive_type"):
-        config["receive_type"] = "auto" # or "manual"
-    print(f"Receive type: {config['receive_type']}")
+    if not config_file.has_section("CAMERA-DISTANCE"):
+        config_file["CAMERA-DISTANCE"] = {}
+    if not config_file.has_section("PATHS"):
+        config_file["PATHS"] = {}
+    camera_config = config_file["CAMERA-DISTANCE"]
+    path_config = config_file["PATHS"]
+
+    if not camera_config.get("distance"):
+        camera_config["distance"] = input(DISTANCE_MESSAGE) or DEFAULT_DISTANCE
+    print(f"Distance: {camera_config['distance']}")
+
+    if not camera_config.get("receive_hex_from_git"):
+        camera_config["receive_hex_from_git"] = "yes"
+    print(f"Receive hex from git: {camera_config['receive_hex_from_git']}")
 
     # I will update the string through github current_hex_string file
     # but if you obtained the new string faster than me, you can
-    # set this config variable to "manual", set your manual string, and the program won't update it
+    # set this config variable to False, set your manual string, and the program won't update it
     # automatically every time you launch it.
-    if config["receive_type"].lower() == "auto" or not config.get("hex_string"):
-        config["hex_string"] = get_current_hex_string()
-    print(f"Hex string: {config['hex_string']}")
+    if camera_config.getboolean("receive_hex_from_git") or not camera_config.get(
+        "hex_string"
+    ):
+        camera_config["hex_string"] = get_current_hex_string()
+    print(f"Hex string: {camera_config['hex_string']}")
 
-    if not config.get("distance"):
-        config["distance"] = (
-            input("Enter distance[default 1200, recommended 1400]: ")
-            or DEFAULT_DISTANCE
+    if not path_config.get("steam_path"):
+        path_config["steam_path"] = get_steam_path()
+    print(f"Steam path: {path_config['steam_path']}")
+
+    if not path_config.get("steam_library_path"):
+        path_config["steam_library_path"] = get_steam_library_path(
+            path_config["steam_path"]
         )
-    print(f"Distance: {config['distance']}")
+    print(f"Steam library path: {path_config['steam_library_path']}")
 
-    if not config.get("steam_path"):
-        config["steam_path"] = get_steam_path()
-    print(f"Steam path: {config['steam_path']}")
-
-    if not config.get("steam_library_path"):
-        config["steam_library_path"] = get_steam_library_path(config["steam_path"])
-    print(f"Steam library path: {config['steam_library_path']}")
-
-    if not config.get("client_dll_path"):
-        config["client_dll_path"] = os.path.join(
-            config["steam_library_path"], CLIENT_DLL_PATH
+    if not path_config.get("client_dll_path"):
+        path_config["client_dll_path"] = os.path.join(
+            path_config["steam_library_path"], CLIENT_DLL_PATH
         )
-    print(f"Client.dll path: {config['client_dll_path']}")
+    print(f"Client.dll path: {path_config['client_dll_path']}")
 
     with open(config_path, "w") as configfile:
         config_file.write(configfile)
+
     print(f"Updated {config_path}")
 
     return (
-        config["receive_type"],
-        config["hex_string"],
-        config["distance"],
-        config["steam_path"],
-        config["steam_library_path"],
-        config["client_dll_path"],
+        camera_config["distance"],
+        camera_config["receive_hex_from_git"],
+        camera_config["hex_string"],
+        path_config["steam_path"],
+        path_config["steam_library_path"],
+        path_config["client_dll_path"],
     )
 
 
 def main():
     (
-        receive_type,
-        hex_string,
         distance,
+        receive_hex_from_git,
+        hex_string,
         steam_path,
         steam_library_path,
         client_dll_path,
