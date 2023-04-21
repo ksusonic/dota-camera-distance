@@ -1,6 +1,6 @@
-## *This will stay updated. When Valve release new patch, I will try to find and implement the new hex-code as fast as possible*. Current code for 7.32e: ```00 00 96 44 00 00 61 45```
+## *This will stay updated. When Valve release new patch, I will try to find and implement the new hex-code as fast as possible*. Current code for 7.33: ```00 00 96 44 00 00 61 45```
 
-# [7.32e]dota-camera-distance
+# [7.33]dota-camera-distance
 
 *Replace your Dota 2 icon by this app to completely forget about manually changing camera distance.*
 
