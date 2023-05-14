@@ -133,7 +133,7 @@ def get_current_hex_string():
         response = requests.get(SERVER_HEX_STRING_LINK)
         response.raise_for_status()
         print("String received from GitHub")
-        return response.text
+        return response.text.strip()
     except requests.exceptions.RequestException as e:
         print(e)
         print("Couldn't receive string from GitHub, using the default one")
