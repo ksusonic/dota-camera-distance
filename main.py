@@ -23,7 +23,7 @@ logger.info("Version: 4.3")
 
 # main globals
 DOTA_APP_ID = "570"
-DEFAULT_HEX_STRING = "00 00 00 00 00 00 2E 40 00 00 96 44 00 00 61 45"  # old 7.32e
+DEFAULT_HEX_STRING = "00 00 AE 42 00 00 96 44 00 00 C8 44 00 40 9C 45"  # 7.33c
 SERVER_HEX_STRING_LINK = (
     "https://raw.githubusercontent.com/"
     "searayeah/dota-camera-distance/main/current_hex_string"
@@ -55,7 +55,7 @@ def set_distance(hex_string, distance, client_dll_path):
             " Please update hex code to have at least 24 symbols."
         )
     elif hex_string_length <= 16:
-        logging.critical(
+        logger.critical(
             f"Hex string {hex_string} is only {hex_string_length} symbols long"
             " which makes search inaccurate, as there might be"
             " more than one occurences of that string in client.dll file."
@@ -86,7 +86,7 @@ def set_distance(hex_string, distance, client_dll_path):
             f" is not found in the hex string {hex_string}"
         )
     elif distance_index == 0:
-        logging.warning(
+        logger.warning(
             f"Hex string {hex_string} starting with default distance"
             f" code {default_distance_hex} makes search a lot slower."
             " Please shift the code, so it starts with other symbols"
@@ -98,7 +98,7 @@ def set_distance(hex_string, distance, client_dll_path):
         + f"\w{{{distance_hex_length}}}"  # regex \w{8} means any 8 characters [a-zA-Z0-9_]
         + hex_string[distance_index + distance_hex_length :]
     )
-    logger.debug(f"Regex code {hex_string_regex}")
+    logger.debug(f"Regex code: {hex_string_regex}")
 
     # Constructing string that would be used for replacement.
     distance_hex_string = (
@@ -106,15 +106,15 @@ def set_distance(hex_string, distance, client_dll_path):
         + distance_hex
         + hex_string[distance_index + distance_hex_length :]
     )
-    logger.debug(f"Replacement string {distance_hex_string}")
+    logger.debug(f"Replacement string: {distance_hex_string}")
 
     with open(client_dll_path, "rb") as f:
         client_dll_hex = f.read().hex()
-        logger.debug("client.dll file read")
+        logger.debug(f"Read: {client_dll_path}")
 
     matches = re.findall(hex_string_regex, client_dll_hex)
     matches_count = len(matches)
-    logging.debug(f"Matches count: {matches_count}. Matches: {matches}")
+    logger.debug(f"Matches count: {matches_count}. Matches: {matches}")
 
     if matches_count == 0:
         # If there are no matches, that means that current hex string is not present in
@@ -135,15 +135,16 @@ def set_distance(hex_string, distance, client_dll_path):
     client_dll_hex_new, changes_count = re.subn(
         hex_string_regex, distance_hex_string, client_dll_hex, 1
     )
+    logger.debug(f"Replaced string, changes count: {changes_count}")
 
     new_matches = re.findall(hex_string_regex, client_dll_hex_new)
-    logger.info(f"Old: {matches}")
-    logger.info(f"New: {new_matches}")
+    logger.debug(f"Old: {matches}")
+    logger.debug(f"New: {new_matches}")
 
     try:
         with open(client_dll_path, "wb") as f:
             f.write(bytes.fromhex(client_dll_hex_new))
-            logger.debug("client.dll file written")
+        logger.debug(f"Written: {client_dll_path}")
     except PermissionError as e:
         raise Exception(
             "Couldn't open client.dll file, close Dota 2 before launching the app",
@@ -156,7 +157,7 @@ def get_steam_path():
     hkey = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, STEAM_REGISTRY_KEY)
     steam_path = winreg.QueryValueEx(hkey, "InstallPath")[0]
     winreg.CloseKey(hkey)
-    logger.debug(f"Retrieved Steam path {steam_path} from winreg")
+    logger.debug(f"Retrieved Steam path: {steam_path} from winreg: {STEAM_REGISTRY_KEY}")
     return steam_path
 
 
@@ -166,11 +167,11 @@ def get_steam_library_path(steam_path):
     # Dota and Steam can have different install locations.
     library_folders_path = os.path.join(steam_path, LIBRARY_FOLDERS_PATH)
     library_folders = vdf.load(open(library_folders_path))["libraryfolders"]
-    logger.debug(f"Opened {library_folders_path}")
+    logger.debug(f"Read {library_folders_path}")
     for key in library_folders:
         if DOTA_APP_ID in library_folders[key]["apps"]:
             dota_path = library_folders[key]["path"]
-            logger.debug(f"Found Dota path in library folders {dota_path}")
+            logger.debug(f"Found Dota path: {dota_path} in library folders")
             return dota_path
     raise Exception(
         "Dota 2 path was not found in libraryfolders.vdf file."
@@ -187,7 +188,7 @@ def dota_was_updating(steam_library_path):
     app_manifest_path = os.path.join(steam_library_path, APP_MANIFEST_PATH)
     app_manifest = vdf.load(open(app_manifest_path))
     app_status = app_manifest["AppState"]["StateFlags"]
-    logger.debug(f"Opened app manifest, initial status: {app_status}")
+    logger.debug(f"Read app manifest: {app_manifest_path}, status: {app_status}")
     if app_status != "4":
         while app_status != "4":
             logger.info(f"Waiting for Dota 2 to get updates, status: {app_status}")
@@ -281,7 +282,7 @@ def set_config():
 
     with open(config_path, "w") as configfile:
         config_file.write(configfile)
-        logger.info(f"Updated config: {config_path}")
+    logger.info(f"Updated config: {config_path}")
 
     return camera_config, path_config
 
@@ -296,7 +297,7 @@ def main():
     )
     if camera_config.getboolean("autostart_game"):
         os.startfile(DOTA_URL)  # Windows only
-        logging.info("Launching Dota 2 ...")
+        logger.info("Launching Dota 2 ...")
 
         # When launching Dota for the first time it might get updates,
         # so client.dll needs to be rewritten again.
@@ -306,7 +307,7 @@ def main():
                 camera_config["distance"],
                 path_config["client_dll_path"],
             )
-            logging.info('Press "Play game"')
+            logger.info('Press "Play game"')
 
 
 if __name__ == "__main__":
