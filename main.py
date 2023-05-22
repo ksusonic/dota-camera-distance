@@ -110,7 +110,7 @@ def set_distance(hex_string, distance, client_dll_path):
 
     with open(client_dll_path, "rb") as f:
         client_dll_hex = f.read().hex()
-        logger.debug(f"Read: {client_dll_path}")
+    logger.debug(f"Read: {client_dll_path}")
 
     matches = re.findall(hex_string_regex, client_dll_hex)
     matches_count = len(matches)
@@ -157,7 +157,9 @@ def get_steam_path():
     hkey = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, STEAM_REGISTRY_KEY)
     steam_path = winreg.QueryValueEx(hkey, "InstallPath")[0]
     winreg.CloseKey(hkey)
-    logger.debug(f"Retrieved Steam path: {steam_path} from winreg: {STEAM_REGISTRY_KEY}")
+    logger.debug(
+        f"Retrieved Steam path: {steam_path} from winreg: {STEAM_REGISTRY_KEY}"
+    )
     return steam_path
 
 
