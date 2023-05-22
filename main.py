@@ -194,7 +194,7 @@ def dota_was_updating(steam_library_path):
     if app_status != "4":
         while app_status != "4":
             logger.info(f"Waiting for Dota 2 to get updates, status: {app_status}")
-            time.sleep(1)
+            time.sleep(3)
             app_manifest = vdf.load(open(app_manifest_path))
             app_status = app_manifest["AppState"]["StateFlags"]
         return True
