@@ -1,10 +1,10 @@
 ## *This will stay updated. When Valve releases new patch, I will find and implement the new hex-code as fast as possible*.
-### Current codes for 7.33c: 
+### Current codes for 7.33d: 
 For manual search in HxD: ```00 00 96 44 00 00 C8 44```
 
 The code used in app for more precision: ```00 00 AE 42 00 00 96 44 00 00 C8 44 00 40 9C 45```
 
-# [7.33c]dota-camera-distance
+# [7.33d]dota-camera-distance
 
 *Replace your Dota 2 icon by this app to completely forget about manually changing camera distance.*
 
