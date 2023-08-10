@@ -40,7 +40,7 @@ Secondly, I wound not consider changing distance as cheating. I do not know why 
 
 ## What if I do not want to use it? How do I change distance manually?
 
-You just need to perform the steps from the [video](https://www.youtube.com/watch?v=GNOkvm5MrB0) I mentioned earlier. I will be updating the codes for you.
+You just need to download [HxD](https://mh-nexus.de/en/hxd/) and perform the steps from the [video](https://www.youtube.com/watch?v=GNOkvm5MrB0) I mentioned earlier. I will be updating the codes for you.
 
 Current codes:
 - For manual search in HxD: ```00 00 96 44 00 00 C8 44```
