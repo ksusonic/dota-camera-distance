@@ -32,7 +32,7 @@ The app automatically does the steps shown in this [video](https://www.youtube.c
 - The hex code will be updated, if there are any changes (usually when big updates happen)
 
 
-## Is it a cheat? Is it bannable?
+## Is it bannable? Is it a cheat?
 
 First of all, the app does not interfere in the Dota process. The game is launched as if you launched if from a shortcut. Players have been using this method for more than five years and so far there have been no bans.
 
