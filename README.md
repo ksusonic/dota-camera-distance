@@ -1,4 +1,4 @@
-# dota-camera-distance
+# DCD
 
 > Replace your Dota 2 icon by this app to completely forget about manually changing camera distance.
 
@@ -7,6 +7,8 @@
 DCD is a small app that automatically changes camera distance (camera-zoom) in Dota 2. Using hex-editors (like [HxD](https://mh-nexus.de/en/hxd/)) to increase camera distance manually might be frustrating as camera distance gets reset every time the game gets an update. So, I've built this app to provide an automatic solution. You should launch it every time you want to play Dota.
 
 ## Quickstart
+
+**Windows only**
 
 [Download and run latest version](https://github.com/searayeah/dota-camera-distance/releases/latest/download/dota-camera-distance.exe), game version supported: 7.34
 
@@ -47,7 +49,7 @@ Current codes:
 
 ## What systems are currently supported?
 
-Currently only Windows is supported. I do not have Mac, so if anyone wants to help me make the app crossplatform - PRs are welcome. Currently, I am slowly researching how to make it work on Linux.
+Currently only **Windows** is supported. I do not have a Mac, so if anyone wants to help me make the app crossplatform - PRs are welcome. Currently, I am slowly researching how to make it work on Linux.
 
 ## How to build it?
 
