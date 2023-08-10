@@ -31,7 +31,6 @@ The app automatically does the steps shown in this [video](https://www.youtube.c
 - The settings are saved at the location of the script as `config.ini` file. **You can change distance value and other stuff using this file**.
 - The hex code will be updated, if there are any changes (usually when big updates happen)
 
-
 ## Is it bannable? Is it a cheat?
 
 First of all, the app does not interfere in the Dota process. The game is launched as if you launched if from a shortcut. Players have been using this method for more than five years and so far there have been no bans.
@@ -40,7 +39,7 @@ Secondly, I wound not consider changing distance as cheating. I do not know why 
 
 ## What if I do not want to use it? How do I change distance manually?
 
-You just need to download [HxD](https://mh-nexus.de/en/hxd/) and perform the steps from the [video](https://www.youtube.com/watch?v=GNOkvm5MrB0) I mentioned earlier. I will be updating the codes for you.
+You just need to download [HxD](https://mh-nexus.de/en/hxd/) and perform the steps from the [video](https://www.youtube.com/watch?v=GNOkvm5MrB0) I mentioned earlier. I will be updating the codes for you. Remember that you will have to do this steps manually every time Dota receives an update, even a small one.
 
 Current codes:
 - For manual search in HxD: ```00 00 96 44 00 00 C8 44```
