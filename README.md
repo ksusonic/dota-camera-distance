@@ -37,7 +37,9 @@ The app automatically does the steps shown in this [video](https://www.youtube.c
 
 First of all, the app does not interfere in the Dota process. The game is launched as if you launched if from a shortcut. Players have been using this method for more than five years and so far there have been no bans.
 
-Secondly, I wound not consider changing distance as cheating. I do not know why the devs have not added this feature to the game settings. I think that it is not very fair when players with [ultrawide screens](https://www.youtube.com/watch?v=ALCneiFSvIY) get a huge advantage over normal players. ![image](https://github.com/searayeah/dota-camera-distance/assets/57370975/51bcce78-963d-4b43-a912-b0c60460de50)
+Secondly, I wound not consider changing distance as cheating. I do not know why the devs have not added this feature to the game settings. I think that it is not very fair when players with [ultrawide screens](https://www.youtube.com/watch?v=ALCneiFSvIY) get a huge advantage over normal players. 
+
+![image](https://github.com/searayeah/dota-camera-distance/assets/57370975/51bcce78-963d-4b43-a912-b0c60460de50)
 
 ## What if I do not want to use it? How do I change distance manually?
 
