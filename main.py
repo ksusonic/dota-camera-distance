@@ -106,14 +106,14 @@ def set_distance(hex_string, distance, shared_library_path):
         raise Exception(
             f"Hex string {hex_string} is only {hex_string_length} symbols long,"
             " which makes search inaccurate, as there is certainly"
-            " more than one occurences of that string in library file."
+            " more than one occurences of that string in shared library file."
             " Please update hex code to have at least 24 symbols."
         )
     elif hex_string_length <= 16:
         logger.critical(
             f"Hex string {hex_string} is only {hex_string_length} symbols long"
             " which makes search inaccurate, as there might be"
-            " more than one occurences of that string in library file."
+            " more than one occurences of that string in shared library file."
             " Please update hex code to have at least 24 symbols."
         )
 
@@ -176,13 +176,13 @@ def set_distance(hex_string, distance, shared_library_path):
         # shared library file and needs to be updated.
         # This usually happens when Valve release big updates to the game.
         raise Exception(
-            "Couldn't find the hex value in library file."
+            "Couldn't find the hex value in shared library file."
             " Valve might have changed it."
         )
     elif matches_count > 1:
         raise Exception(
             f"Hex string {hex_string} is not precise enough to clearly find"
-            f" it's location in library file. Currently found {matches_count}"
+            f" it's location in shared library file. Currently found {matches_count}"
             " matches. Please, update the string's length to be more precise."
         )
 
@@ -347,7 +347,7 @@ def main():
         logger.info("Launching Dota 2 ...")
 
         # When launching Dota for the first time it might get updates,
-        # so library file needs to be rewritten again.
+        # so shared library file needs to be rewritten again.
         if dota_was_updating(path_config["steam_library_path"]):
             set_distance(
                 camera_config["hex_string"],
