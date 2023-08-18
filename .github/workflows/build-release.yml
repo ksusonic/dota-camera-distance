@@ -55,6 +55,10 @@ jobs:
         if: ${{ matrix.os == 'macos-latest' }}
         run: pyinstaller --noconfirm --onefile --console --clean --icon game-icon.ico --name DCD-macos main.py
 
+      - name: Make executable (linux, mac)
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: chmod +x DCD-linux DCD-macos
+
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
