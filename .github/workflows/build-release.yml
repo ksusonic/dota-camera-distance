@@ -4,15 +4,19 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
+        description: Tag name
         required: true
         type: string
       body:
+        description: Release text body
         required: false
         type: string
       name:
+        description: Release name
         required: false
         type: string
       gen_release_notes:
+        description: Automatically generate release notes
         required: false
         type: boolean
 

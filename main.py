@@ -65,12 +65,12 @@ elif sys.platform.startswith("linux"):
 elif sys.platform.startswith("darwin"):
     DEFAULT_HEX_STRING = "00 00 7A 43 00 80 09 44 00 96 44 00 00 C8 44"
 
-    SERVER_HEX_STRING_LINK = SERVER_LINK + "current_hex_string_linux"
+    SERVER_HEX_STRING_LINK = SERVER_LINK + "current_hex_string_macos"
     SHARED_LIBRARY_PATH = os.path.join(BIN_PATH, "osx64", "libclient.dylib")
 
     def get_steam_path():
         steam_path = os.path.expanduser(
-            os.path.join("~", "Library", "Application Support", "steam")
+            os.path.join("~", "Library", "Application Support", "Steam")
         )
         logger.debug(f"Retrieved Steam path: {steam_path}")
         return steam_path
@@ -282,7 +282,7 @@ def set_config():
         path_config["shared_library_path"] = os.path.join(
             path_config["steam_library_path"], SHARED_LIBRARY_PATH
         )
-    logger.info(f"shared library path: {path_config['shared_library_path']}")
+    logger.info(f"Shared library path: {path_config['shared_library_path']}")
 
     with open(config_path, "w") as configfile:
         config_file.write(configfile)
