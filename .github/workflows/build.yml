@@ -1,0 +1,44 @@
+name: build
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+          architecture: "x64"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build executable (windows)
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: pyinstaller --noconfirm --onefile --console --clean --icon game-icon.ico --name DCD-windows main.py
+
+      - name: Build executable (linux)
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: pyinstaller --noconfirm --onefile --console --clean --icon game-icon.ico --name DCD-linux main.py
+
+      - name: Build executable (mac)
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: pyinstaller --noconfirm --onefile --console --clean --icon game-icon.ico --name DCD-macos main.py
+
+      - name: Upload executables
+        uses: actions/upload-artifact@v3
+        with:
+          name: executables
+          path: |
+            dist/DCD-windows.exe
+            dist/DCD-linux
+            dist/DCD-macos

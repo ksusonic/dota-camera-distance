@@ -1,0 +1,68 @@
+name: build-release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: Tag name
+        required: true
+        type: string
+      body:
+        description: Release text body
+        required: false
+        type: string
+      name:
+        description: Release name
+        required: false
+        type: string
+      gen_release_notes:
+        description: Automatically generate release notes
+        required: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+          architecture: "x64"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build executable (windows)
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: pyinstaller --noconfirm --onefile --console --clean --icon game-icon.ico --name DCD-windows main.py
+
+      - name: Build executable (linux)
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: pyinstaller --noconfirm --onefile --console --clean --icon game-icon.ico --name DCD-linux main.py
+
+      - name: Build executable (mac)
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: pyinstaller --noconfirm --onefile --console --clean --icon game-icon.ico --name DCD-macos main.py
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ inputs.tag_name }}
+          body: ${{ inputs.body }}
+          name: ${{ inputs.name }}
+          generate_release_notes: ${{ inputs.gen_release_notes }}
+          files: |
+            dist/DCD-windows.exe
+            dist/DCD-linux
+            dist/DCD-macos
