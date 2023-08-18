@@ -12,49 +12,31 @@ import sys
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-log_level = {
-    "DEBUG": logging.DEBUG,
-    "INFO": logging.INFO,
-    "WARNING": logging.WARNING,
-    "ERROR": logging.ERROR,
-    "CRITICAL": logging.CRITICAL,
-}
-logger.info(f"OS: {sys.platform}")
-logger.info("Version: 5.0")
 
-# globals
+logger.info("Version: 5.0")
+logger.info(f"OS: {sys.platform}")
+
+# constants
 DOTA_APP_ID = "570"
-DEFAULT_DISTANCE = "1200"
+DOTA_URL = f"steam://rungameid/{DOTA_APP_ID}"
 
 LIBRARY_FOLDERS_PATH = os.path.join("steamapps", "libraryfolders.vdf")
 APP_MANIFEST_PATH = os.path.join("steamapps", f"appmanifest_{DOTA_APP_ID}.acf")
+BIN_PATH = os.path.join("steamapps", "common", "dota 2 beta", "game", "dota", "bin")
+
+DEFAULT_DISTANCE = "1200"
+SERVER_LINK = "https://raw.githubusercontent.com/searayeah/dota-camera-distance/main/"
 
 if sys.platform.startswith("win32"):
     import winreg
 
     DEFAULT_HEX_STRING = "00 00 AE 42 00 00 96 44 00 00 C8 44 00 40 9C 45"
-    SERVER_HEX_STRING_LINK = (
-        "https://raw.githubusercontent.com/"
-        "searayeah/dota-camera-distance/main/current_hex_string"
-    )
+    SERVER_HEX_STRING_LINK = SERVER_LINK + "current_hex_string"
 
     STEAM_REGISTRY_KEY = os.path.join("SOFTWARE", "WOW6432Node", "Valve", "Steam")
-    SHARED_LIBRARY_PATH = os.path.join(
-        "steamapps",
-        "common",
-        "dota 2 beta",
-        "game",
-        "dota",
-        "bin",
-        "win64",
-        "client.dll",
-    )
-
-    DOTA_URL = f"steam://rungameid/{DOTA_APP_ID}"
+    SHARED_LIBRARY_PATH = os.path.join(BIN_PATH, "win64", "client.dll")
 
     def get_steam_path():
-        # Getting Steam path from Windows Registry.
-        # This does not guarantee finding Dota 2 folder.
         hkey = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, STEAM_REGISTRY_KEY)
         steam_path = winreg.QueryValueEx(hkey, "InstallPath")[0]
         winreg.CloseKey(hkey)
@@ -63,42 +45,44 @@ if sys.platform.startswith("win32"):
         )
         return steam_path
 
+    def start_game():
+        os.startfile(DOTA_URL)
+
 elif sys.platform.startswith("linux"):
     DEFAULT_HEX_STRING = "00 00 AF 43 00 80 3B 44 00 00 96 44 33 33 33 3F"
-    SERVER_HEX_STRING_LINK = (
-        "https://raw.githubusercontent.com/"
-        "searayeah/dota-camera-distance/main/current_hex_string_linux"
-    )
-    SHARED_LIBRARY_PATH = os.path.join(
-        "steamapps",
-        "common",
-        "dota 2 beta",
-        "game",
-        "dota",
-        "bin",
-        "linuxsteamrt64",
-        "libclient.so",
-    )
 
-    DOTA_URL = f"steam steam://rungameid/{DOTA_APP_ID}"
+    SERVER_HEX_STRING_LINK = SERVER_LINK + "current_hex_string_linux"
+    SHARED_LIBRARY_PATH = os.path.join(BIN_PATH, "linuxsteamrt64", "libclient.so")
 
     def get_steam_path():
         steam_path = os.path.expanduser(os.path.join("~", ".steam", "steam"))
-        logger.debug(f"Retrieved Steam path: {steam_path} (linux)")
+        logger.debug(f"Retrieved Steam path: {steam_path}")
         return steam_path
 
+    def start_game():
+        os.system(f"steam {DOTA_URL}")
+
 elif sys.platform.startswith("darwin"):
-    raise Exception("OS not supported")
+    DEFAULT_HEX_STRING = "00 00 7A 43 00 80 09 44 00 96 44 00 00 C8 44"
+
+    SERVER_HEX_STRING_LINK = SERVER_LINK + "current_hex_string_linux"
+    SHARED_LIBRARY_PATH = os.path.join(BIN_PATH, "osx64", "libclient.dylib")
+
+    def get_steam_path():
+        steam_path = os.path.expanduser(
+            os.path.join("~", "Library", "Application Support", "steam")
+        )
+        logger.debug(f"Retrieved Steam path: {steam_path}")
+        return steam_path
+
+    def start_game():
+        os.system(f"steam {DOTA_URL}")
+
 else:
     raise Exception("OS not supported")
 
 
 def set_distance(hex_string, distance, shared_library_path):
-    # First of all, it is important to notice that distance value is only
-    # 8 numbers long, but 8 numbers is not enough to determine its exact location,
-    # as there can be more than one occurence of the sequence.
-    # Therefore, we use big strings e.g 00 00 00 00 00 00 2E 40 00 00 96 44 00 00 E1 44.
-
     hex_string = hex_string.lower().replace(" ", "")
     hex_string_length = len(hex_string)
 
@@ -117,22 +101,9 @@ def set_distance(hex_string, distance, shared_library_path):
             " Please update hex code to have at least 24 symbols."
         )
 
-    # Converting DEFAULT_DISTANCE of 1200 to hex format.
     default_distance_hex = struct.pack("f", float(DEFAULT_DISTANCE)).hex()
-
-    # Converting desired distance to hex format.
     distance_hex = struct.pack("f", float(distance)).hex()
-
-    # This might be unnecessary, always 8 chars long
     distance_hex_length = len(distance_hex)
-
-    # Find the location of default distance (00 00 96 44 = 1200)
-    # in hex_string (e.g 0000000000002E40 00 00 96 44 0000E144).
-
-    # hex_string is not hardcoded as it is changed from patch to patch.
-    # This 8 numbers can be at various positions (start, middle, end, etc.).
-    # By doing this, the position of this 8 numbers is remembered by index
-    # and this allows to find and change distance regardless of its current value.
     distance_index = hex_string.find(default_distance_hex)
 
     if distance_index == -1:
@@ -147,7 +118,6 @@ def set_distance(hex_string, distance, shared_library_path):
             " Please shift the code, so it starts with other symbols"
         )
 
-    # Constructing regular expression to find the position in shared library file.
     hex_string_regex = re.compile(
         hex_string[:distance_index]
         + f"\w{{{distance_hex_length}}}"  # regex \w{8} means any 8 characters [a-zA-Z0-9_]
@@ -155,7 +125,6 @@ def set_distance(hex_string, distance, shared_library_path):
     )
     logger.debug(f"Regex code: {hex_string_regex}")
 
-    # Constructing string that would be used for replacement.
     distance_hex_string = (
         hex_string[:distance_index]
         + distance_hex
@@ -172,9 +141,6 @@ def set_distance(hex_string, distance, shared_library_path):
     logger.debug(f"Matches count: {matches_count}. Matches: {matches}")
 
     if matches_count == 0:
-        # If there are no matches, that means that current hex string is not present in
-        # shared library file and needs to be updated.
-        # This usually happens when Valve release big updates to the game.
         raise Exception(
             "Couldn't find the hex value in shared library file."
             " Valve might have changed it."
@@ -186,7 +152,6 @@ def set_distance(hex_string, distance, shared_library_path):
             " matches. Please, update the string's length to be more precise."
         )
 
-    # Replacing
     shared_library_hex_new, changes_count = re.subn(
         hex_string_regex, distance_hex_string, shared_library_hex, 1
     )
@@ -207,16 +172,14 @@ def set_distance(hex_string, distance, shared_library_path):
 
 
 def get_steam_library_path(steam_path):
-    # Dota 2 install path is stored in libraryfolders.vdf file.
-    # Its "path" variable needs to be checked as
-    # Dota and Steam can have different install locations.
+    # Dota and Steam can have different install locations/drives.
     library_folders_path = os.path.join(steam_path, LIBRARY_FOLDERS_PATH)
     library_folders = vdf.load(open(library_folders_path))["libraryfolders"]
     logger.debug(f"Read {library_folders_path}")
     for key in library_folders:
         if DOTA_APP_ID in library_folders[key]["apps"]:
             dota_path = library_folders[key]["path"]
-            logger.debug(f"Found Dota path: {dota_path} in library folders")
+            logger.debug(f"Found Dota path: {dota_path} in libraryfolders")
             return dota_path
     raise Exception(
         "Dota 2 path was not found in libraryfolders.vdf file."
@@ -227,9 +190,7 @@ def get_steam_library_path(steam_path):
 
 
 def dota_was_updating(steam_library_path):
-    # Dota 2 status is stored in app_manifest.acf file under the variable "StateFlags".
     # If "StateFlags" is '4' that means that Dota is updated/installed
-    # and ready to launch.
     app_manifest_path = os.path.join(steam_library_path, APP_MANIFEST_PATH)
     app_manifest = vdf.load(open(app_manifest_path))
     app_status = app_manifest["AppState"]["StateFlags"]
@@ -246,7 +207,7 @@ def dota_was_updating(steam_library_path):
 
 
 def get_current_hex_string():
-    # Retrieve current hex string. This is done to avoid hardcoding
+    # This is done to avoid hardcoding
     # this value and enable updating it through Github.
     try:
         response = requests.get(SERVER_HEX_STRING_LINK)
@@ -283,7 +244,7 @@ def set_config():
 
     if not camera_config.get("logging_level"):
         camera_config["logging_level"] = "INFO"
-    logger.setLevel(log_level.get(camera_config["logging_level"], logging.INFO))
+    logger.setLevel(camera_config["logging_level"].upper())
     logger.info(f"Logging level: {logging.getLevelName(logger.getEffectiveLevel())}")
 
     if not camera_config.get("distance"):
@@ -295,8 +256,6 @@ def set_config():
         camera_config["receive_hex_from_git"] = "yes"
     logger.info(f"Receive hex from git: {camera_config['receive_hex_from_git']}")
 
-    # I will update the string through github current_hex_string file
-    # but if you obtained the new string faster than me, you can
     # set this config variable to False, set your manual string, and the program won't update it
     # automatically every time you launch it.
     if camera_config.getboolean("receive_hex_from_git") or not camera_config.get(
@@ -341,9 +300,7 @@ def main():
         path_config["shared_library_path"],
     )
     if camera_config.getboolean("autostart_game"):
-        # os.startfile(DOTA_URL)  # Windows only
-        os.system("steam steam://rungameid/570")
-
+        start_game()
         logger.info("Launching Dota 2 ...")
 
         # When launching Dota for the first time it might get updates,
