@@ -61,7 +61,7 @@ First of all, the app does not interfere in the Dota 2 process. It simply automa
 
 Players have been editing the `client.dll` file for years to change camera distance and **so far there have been no bans**. One Russian popular streamer, [NS](https://www.twitch.tv/just_ns), demonstrated this method in a **2017** [video](https://www.youtube.com/watch?v=Zoslss7eNYA) that got over a million views, and Valve never really bothered to fix it. Moreover, in this video, he explains that the discussion of this method began a long time ago, in **2015**, on the Dota 2 developers forum and, again, Valve does not care.
 
-Secondly, I would not consider changing distance to be cheating. I do not know why the Dota 2 developers have not added this feature to the game settings yet. I do not think it is fair that players with [ultra-wide screens](https://www.youtube.com/watch?v=ALCneiFSvIY) get a huge advantage over regular players. 
+Secondly, I would not consider changing distance to be cheating. I do not know why the Dota 2 developers have not added this feature to the game settings yet. I do not think it is fair that players with [ultra-wide screens](https://www.youtube.com/watch?v=ALCneiFSvIY) get a huge advantage over regular players. Another example of ultra-wide screens advantage - [link](https://imgur.com/a/YEO6w).
 
 ![image](https://github.com/searayeah/dota-camera-distance/assets/57370975/51bcce78-963d-4b43-a912-b0c60460de50)
 
